@@ -1,12 +1,6 @@
 package edu.uiuc.zenvisage.api;
 
-import java.io.IOException;
-import java.io.PrintWriter; 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -24,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
@@ -47,6 +42,7 @@ import edu.uiuc.zenvisage.service.utility.PasswordStorage.CannotPerformOperation
 import edu.uiuc.zenvisage.service.utility.PasswordStorage.InvalidHashException;
 import edu.uiuc.zenvisage.api.Readconfig;
 import edu.uiuc.zenvisage.data.remotedb.SQLQueryExecutor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class ZvBasicAPI {
@@ -655,16 +651,83 @@ public class ZvBasicAPI {
 		}
 		return null;
 	}
-    
+
+	public File generateMetaFile(File file) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		String signature = br.readLine();
+		String[] category = signature.split(",");
+		String str = br.readLine();
+        String[] data = str.split(",");
+        String[] types = new String[category.length];
+        for(int i = 0; i < data.length; ++i){
+            String entry = data[i].replace("\"", "");
+            try{
+                Integer.parseInt(data[i]);
+            }catch(NumberFormatException e){
+                try{
+                    Float.parseFloat(data[i]);
+
+                }catch(NumberFormatException ex){
+                    //not float
+                    types[i] = "string";
+                    continue;
+                }
+                types[i] = "float";
+                continue;
+            }
+            types[i] = "int";
+            //check if float
+
+        }
+        StringBuilder bd = new StringBuilder();
+        for (int i = 0; i < category.length; ++i){
+            bd.append(category[i].replace("\"", ""));
+            bd.append(":");
+            bd.append(types[i]);
+            bd.append(",");
+            bd.append("indexed,");
+            if (types[i].equals("float") || types[i].equals("int")){
+                bd.append("T,T,F,F,F,0,Q");
+            }else{
+                bd.append("F,F,T,F,F,0,Q");
+            }
+            bd.append("\n");
+        }
+        bd.setLength(bd.length()-1);
+        System.out.println("-------------");
+        System.out.println(data[0]);
+        System.out.println(data[1]);
+
+        System.out.println(bd.toString());
+        File meta = new File("meta");
+        FileWriter fileWriter = new FileWriter(meta);
+        fileWriter.write(bd.toString());
+        fileWriter.flush();
+        fileWriter.close();
+        return meta;
+
+	}
     @RequestMapping(value = "/easyupload", method = RequestMethod.POST)
     public @ResponseBody void easyupload(@RequestParam String dataset, String csvPath) throws IOException, ServletException, InterruptedException, SQLException, CannotPerformOperationException{
         System.out.println("request succ " + dataset );
+
+
         List<String> dataset5 = new ArrayList<String>(); //cmu
         dataset5.add(dataset);
-        dataset5.add("/Users/Junan/Downloads/zenvisage-3.0/data/data57.csv");
-        dataset5.add("/Users/Junan/Downloads/zenvisage-3.0/data/data57.txt");
+        File file = new File("temp");
+		FileWriter fileWriter = new FileWriter(file);
+		fileWriter.write(csvPath);
+		fileWriter.flush();
+		fileWriter.close();
+
+
+		dataset5.add(file.getAbsolutePath());
+		File meta = generateMetaFile(file);
+
+        dataset5.add(meta.getAbsolutePath());
         ZvMain zvMain=new ZvMain();
         zvMain.uploadDatasettoDB(dataset5,false);
+
     }
     
 	@RequestMapping(value = "/test", method = RequestMethod.GET)

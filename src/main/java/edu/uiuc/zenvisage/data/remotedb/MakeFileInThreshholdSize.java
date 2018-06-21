@@ -10,7 +10,7 @@ import java.io.IOException;
 public class MakeFileInThreshholdSize {
 	private static final String READFILENAME = "data/flight-random2M.csv";
 	private static final String WriteFILENAME ="data/flights.csv";
-	private static final int N = 2000000;
+	private static final int N = 3000000;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = null;

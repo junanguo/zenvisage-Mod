@@ -29,7 +29,7 @@ public class ZvServer {
 
 	public void start() throws Exception {	
 		server = new Server(port);	
-		
+		server.setAttribute("org.eclipse.jetty.server.Request.maxFormContentSize", 500000);
 		WebAppContext webAppContext = new WebAppContext();
 		webAppContext.setContextPath("/");
 		webAppContext.setWar("zenvisage.war");

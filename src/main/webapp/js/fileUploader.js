@@ -155,6 +155,21 @@ app.controller('fileuploadController', [
     datatable_creation();   
   });
 
+          var input = document.getElementById("csv");
+          var content;
+
+          input.addEventListener("change", function () {
+              if (this.files && this.files[0]) {
+                  var myFile = this.files[0];
+                  var reader = new FileReader();
+
+                  reader.addEventListener('load', function (e) {
+                      content = e.target.result;
+                  });
+
+                  reader.readAsBinaryString(myFile);
+              }
+          });
 function easyUpload() {
 alert("Upload requested");
 
@@ -166,10 +181,9 @@ if($cookies.getObject('userinfo')){
 }
 var insertUserTablePair = {'userName':username, 'datasetName':$("#datasetNameInput").val()};
 
-
-  	var object_for_join_key = {
+    var object_for_join_key = {
   	  "dataset": $("#datasetNameInput").val(),
-  	  "csvPath": "path", 
+  	  "csvPath": content,
   	};
   	
 $.ajax({
