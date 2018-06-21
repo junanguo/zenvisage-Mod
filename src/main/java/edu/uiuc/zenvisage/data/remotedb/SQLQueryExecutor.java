@@ -522,8 +522,6 @@ public class SQLQueryExecutor {
  		}
 
 		Statement st = c.createStatement();
-
-//		System.out.println(sql);
 		count = st.executeUpdate(sql);
 		st0.close();
 		rs0.close();

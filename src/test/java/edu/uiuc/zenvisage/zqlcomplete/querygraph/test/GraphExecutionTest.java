@@ -1,4 +1,4 @@
-package edu.uiuc.zenvisage.zqlcomplete.querygraph.test;
+package test.java.edu.uiuc.zenvisage.zqlcomplete.querygraph.test;
 
 import static org.junit.Assert.*;
 

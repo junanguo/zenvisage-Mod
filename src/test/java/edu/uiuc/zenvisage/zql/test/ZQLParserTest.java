@@ -1,4 +1,4 @@
-package edu.uiuc.zenvisage.zql.test;
+package test.java.edu.uiuc.zenvisage.zql.test;
 
 import static org.junit.Assert.*;
 

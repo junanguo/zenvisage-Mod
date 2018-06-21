@@ -155,6 +155,70 @@ app.controller('fileuploadController', [
     datatable_creation();   
   });
 
+function easyUpload() {
+alert("Upload requested");
+
+var username;
+if($cookies.getObject('userinfo')){
+  username = $cookies.getObject('userinfo')['username'][0];
+}else{
+  username = "public";
+}
+var insertUserTablePair = {'userName':username, 'datasetName':$("#datasetNameInput").val()};
+
+
+  	var object_for_join_key = {
+  	  "dataset": $("#datasetNameInput").val(),
+  	  "csvPath": "path", 
+  	};
+  	
+$.ajax({
+            type: "POST",
+            url: "/zv/easyupload", 
+            data: object_for_join_key,
+            async: false,
+            success: function(response){
+               $.ajax({
+                                url : '/zv/insertUserTablePair',
+                                type: 'POST',
+                                data: insertUserTablePair,
+                                success: function(response){
+              
+                                  // if(username == 'public'){
+                                  //   alert("Inserted as public dataset");
+                                  // }else{
+                                    var today = new Date();
+                                    var expiresValue = new Date(today);
+                                    //Set 'expires' option in 2 hours
+                                    expiresValue.setMinutes(today.getMinutes() + 120);
+                                    $cookies.putObject("userinfo",response,{'expires': expiresValue})
+                                    // angular.element($('#sidebar')).scope().updatetablelist(response['tablelist']);
+                                    datasetInfo.storetablelist(response['tablelist']);
+                                    $scope.tablelist = datasetInfo.getTablelist();
+                                    // console.log("table inserted into your account successfully")
+                                  // }
+              
+                                },
+                                error: function(response){
+                                  alert("fail to insert dataset into your account")
+                                }
+                              });
+							  $('#dataset-form-control').append($("<option></option>")
+							                .attr("value", $("#datasetNameInput").val())
+							                .text( $("#datasetNameInput").val()));
+							                document.getElementById("uploadingProgressMessage").style.display = "block";
+							                document.getElementById("submitButton").style.display = "none";
+							  alert("Upload successful");
+							  location.reload();
+            },
+            error: function() {
+              alert("failed to add to database");
+            } 
+});
+  	   
+  }
+ document.getElementById("eupload").addEventListener("click", easyUpload, false);
+
   function datatable_creation() {
     var xyzQuery = {datasetName:datasetNameInput, variables:selectedAttributesParsed};
     console.log(xyzQuery);

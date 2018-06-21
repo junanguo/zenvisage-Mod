@@ -72,9 +72,6 @@ public class SchemeToMetatable {
 	}
 	
 	public String schemeFileToMetaSQLStream(String filePath, String tablename) throws IOException{
-//		System.out.println(filePath);
-//		System.out.println(tablename);
-//		InputStream is = getClass().getResourceAsStream(filePath);
 		tablename = tablename.toLowerCase();
 		StringBuilder createTableSQLBuilder = new StringBuilder("Create table " + tablename + "(");
 		createTableSQLBuilder.append("id SERIAL PRIMARY KEY, ");
@@ -103,8 +100,6 @@ public class SchemeToMetatable {
 		sql.replace(sql.length()-2, sql.length(), ";");
 		createTableSQLBuilder.replace(createTableSQLBuilder.length()-2,createTableSQLBuilder.length(), ");");
 		this.createTableSQL = createTableSQLBuilder.toString();
-//		System.out.println(createTableSQL);
-		
 		return sql.toString();
 	}
 	

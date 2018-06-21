@@ -123,11 +123,10 @@ public class DatabaseAutoLoader {
 
 
 		List<String> dataset5 = new ArrayList<String>(); //cmu
-		dataset5.add("real_estate_tutorial");
-		file = new File(zvServer.getClass().getClassLoader().
-				getResource(("real_estate_tutorial.csv")).getFile());
+		dataset5.add("data57");
+		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.csv");
 		dataset5.add(file.getAbsolutePath());
-		file = new File(zvServer.getClass().getClassLoader().getResource(("real_estate.txt")).getFile());
+		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.txt");
 		dataset5.add(file.getAbsolutePath());
 		ZvMain zvMain=new ZvMain();
 		zvMain.uploadDatasettoDB(dataset1,false);

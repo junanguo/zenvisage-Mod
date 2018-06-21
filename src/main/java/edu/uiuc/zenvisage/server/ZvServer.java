@@ -9,6 +9,7 @@ import java.util.List;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 
+import edu.uiuc.zenvisage.api.*;
 import edu.uiuc.zenvisage.api.Readconfig;
 import edu.uiuc.zenvisage.data.remotedb.SQLQueryExecutor;
 import edu.uiuc.zenvisage.service.ZvMain;

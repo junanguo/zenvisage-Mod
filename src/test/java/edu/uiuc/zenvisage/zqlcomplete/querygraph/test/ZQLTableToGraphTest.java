@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.uiuc.zenvisage.zqlcomplete.querygraph.test;
+package test.java.edu.uiuc.zenvisage.zqlcomplete.querygraph.test;
 
 import java.io.IOException;
 import java.sql.SQLException;

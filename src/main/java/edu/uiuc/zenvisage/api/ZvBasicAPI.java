@@ -15,7 +15,10 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
+import edu.uiuc.zenvisage.server.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -42,6 +45,8 @@ import edu.uiuc.zenvisage.model.AxisVariables;
 import edu.uiuc.zenvisage.service.ZvMain;
 import edu.uiuc.zenvisage.service.utility.PasswordStorage.CannotPerformOperationException;
 import edu.uiuc.zenvisage.service.utility.PasswordStorage.InvalidHashException;
+import edu.uiuc.zenvisage.api.Readconfig;
+import edu.uiuc.zenvisage.data.remotedb.SQLQueryExecutor;
 
 @Controller
 public class ZvBasicAPI {
@@ -650,7 +655,18 @@ public class ZvBasicAPI {
 		}
 		return null;
 	}
-
+    
+    @RequestMapping(value = "/easyupload", method = RequestMethod.POST)
+    public @ResponseBody void easyupload(@RequestParam String dataset, String csvPath) throws IOException, ServletException, InterruptedException, SQLException, CannotPerformOperationException{
+        System.out.println("request succ " + dataset );
+        List<String> dataset5 = new ArrayList<String>(); //cmu
+        dataset5.add(dataset);
+        dataset5.add("/Users/Junan/Downloads/zenvisage-3.0/data/data57.csv");
+        dataset5.add("/Users/Junan/Downloads/zenvisage-3.0/data/data57.txt");
+        ZvMain zvMain=new ZvMain();
+        zvMain.uploadDatasettoDB(dataset5,false);
+    }
+    
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	@ResponseBody
 	public String test(@RequestParam(value="query") String arg) {

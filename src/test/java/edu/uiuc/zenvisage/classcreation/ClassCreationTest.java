@@ -1,4 +1,4 @@
-package edu.uiuc.zenvisage.classcreation;
+package test.java.edu.uiuc.zenvisage.classcreation;
 
 import static org.junit.Assert.*;
 

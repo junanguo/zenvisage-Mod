@@ -22,7 +22,7 @@ import edu.uiuc.zenvisage.data.Query.FilterPredicate;
 import edu.uiuc.zenvisage.data.remotedb.Attribute;
 import edu.uiuc.zenvisage.data.remotedb.SQLQueryExecutor;
 import edu.uiuc.zenvisage.data.remotedb.WrapperType;
-import  edu.uiuc.zenvisage.data.roaringdb.db.ColumnMetadata;
+import edu.uiuc.zenvisage.data.roaringdb.db.ColumnMetadata;
 
 public class Database {
 	private String name;
