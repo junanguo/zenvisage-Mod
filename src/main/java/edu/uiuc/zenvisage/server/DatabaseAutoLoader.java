@@ -92,48 +92,48 @@ public class DatabaseAutoLoader {
 		// 	System.out.println("Data folder route found: " + folderURL.toString());
 		// }
 
-		List<String> dataset1 = new ArrayList<String>(); // real_estate
-		dataset1.add("real_estate");
-		File file = new File(zvServer.getClass().getClassLoader().
-				getResource(("real_estate.csv")).getFile());
-		dataset1.add(file.getAbsolutePath());
-		file = new File(zvServer.getClass().getClassLoader().getResource(("real_estate.txt")).getFile());
-		dataset1.add(file.getAbsolutePath());
-
-		List<String> dataset2 = new ArrayList<String>(); //weather
-		dataset2.add("weather");
-		file = new File(zvServer.getClass().getClassLoader().getResource(("weather.csv")).getFile());
-		dataset2.add(file.getAbsolutePath());
-		file = new File(zvServer.getClass().getClassLoader().getResource(("weather.txt")).getFile());
-		dataset2.add(file.getAbsolutePath());
-
-		List<String> dataset3 = new ArrayList<String>(); //flights
-		dataset3.add("flights");
-		file = new File(zvServer.getClass().getClassLoader().getResource(("flights.csv")).getFile());
-		dataset3.add(file.getAbsolutePath());
-		file = new File(zvServer.getClass().getClassLoader().getResource(("flights.txt")).getFile());
-		dataset3.add(file.getAbsolutePath());
-
-		List<String> dataset4 = new ArrayList<String>(); //cmu
-		dataset4.add("cmu");
-		file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.csv")).getFile());
-		dataset4.add(file.getAbsolutePath());
-		file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.txt")).getFile());
-		dataset4.add(file.getAbsolutePath());
-
-
-		List<String> dataset5 = new ArrayList<String>(); //cmu
-		dataset5.add("data57");
-		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.csv");
-		dataset5.add(file.getAbsolutePath());
-		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.txt");
-		dataset5.add(file.getAbsolutePath());
-		ZvMain zvMain=new ZvMain();
-		zvMain.uploadDatasettoDB(dataset1,false);
-		zvMain.uploadDatasettoDB(dataset2,false);
-		zvMain.uploadDatasettoDB(dataset3,false);
-		zvMain.uploadDatasettoDB(dataset4,false);
-		zvMain.uploadDatasettoDB(dataset5,false);
+//		List<String> dataset1 = new ArrayList<String>(); // real_estate
+//		dataset1.add("real_estate");
+//		File file = new File(zvServer.getClass().getClassLoader().
+//				getResource(("real_estate.csv")).getFile());
+//		dataset1.add(file.getAbsolutePath());
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("real_estate.txt")).getFile());
+//		dataset1.add(file.getAbsolutePath());
+//
+//		List<String> dataset2 = new ArrayList<String>(); //weather
+//		dataset2.add("weather");
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("weather.csv")).getFile());
+//		dataset2.add(file.getAbsolutePath());
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("weather.txt")).getFile());
+//		dataset2.add(file.getAbsolutePath());
+//
+//		List<String> dataset3 = new ArrayList<String>(); //flights
+//		dataset3.add("flights");
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("flights.csv")).getFile());
+//		dataset3.add(file.getAbsolutePath());
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("flights.txt")).getFile());
+//		dataset3.add(file.getAbsolutePath());
+//
+//		List<String> dataset4 = new ArrayList<String>(); //cmu
+//		dataset4.add("cmu");
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.csv")).getFile());
+//		dataset4.add(file.getAbsolutePath());
+//		file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.txt")).getFile());
+//		dataset4.add(file.getAbsolutePath());
+//
+//
+//		List<String> dataset5 = new ArrayList<String>(); //cmu
+//		dataset5.add("data57");
+//		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.csv");
+//		dataset5.add(file.getAbsolutePath());
+//		file = new File("/Users/Junan/Downloads/zenvisage-3.0/data/data57.txt");
+//		dataset5.add(file.getAbsolutePath());
+//		ZvMain zvMain=new ZvMain();
+//		zvMain.uploadDatasettoDB(dataset1,false);
+//		zvMain.uploadDatasettoDB(dataset2,false);
+//		zvMain.uploadDatasettoDB(dataset3,false);
+//		zvMain.uploadDatasettoDB(dataset4,false);
+//		zvMain.uploadDatasettoDB(dataset5,false);
 	}
 
 	public void initializeRootUser() throws IOException, ServletException, InterruptedException, SQLException, CannotPerformOperationException, InvalidHashException{

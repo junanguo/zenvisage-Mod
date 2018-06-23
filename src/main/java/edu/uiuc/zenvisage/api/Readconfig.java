@@ -7,7 +7,7 @@ import java.util.Properties;
 public class Readconfig {
 	
 	static Properties props = new Properties();
-	static String configloc = "/src/main/resources/config.properties";
+	static String configloc = "/zenvisage/src/main/resources/config.properties";
 	static File f = new File("");
 	static String path = f.getAbsoluteFile().getParent()+configloc;
 	

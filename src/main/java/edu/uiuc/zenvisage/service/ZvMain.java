@@ -614,7 +614,7 @@ public class ZvMain {
 		
 	}
 	public Analysis buildAnalysisDragnDropInterfaceQuery(String query, String method) throws InterruptedException, IOException, SQLException{
-	//public Result runDragnDropInterfaceQuery(String query, String method) throws InterruptedException, IOException, SQLException{
+	//public Result runDragnDropInterfaceQuery(String query, Stringƒup method) throws InterruptedException, IOException, SQLException{
 		// get data from database
 		 System.out.println("runDragnDropInterfaceQuery");
 		 ZvQuery args = new ObjectMapper().readValue(query,ZvQuery.class);

@@ -1377,6 +1377,7 @@ $scope.inittablelist = function () {
 
       $http.get('/zv/getformdata', config).
         success(function(response) {
+          log.info("HERE IS THE RESPONSE: " + response);
           globalDatasetInfo = response;
           datasetInfo.store(response); //saves form data to datasetInfo
           $scope.categories = [];

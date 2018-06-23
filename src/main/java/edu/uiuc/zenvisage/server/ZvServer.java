@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.awt.Desktop;
+import java.net.URI;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -21,6 +24,7 @@ public class ZvServer {
 	
 	static{
 		port = Readconfig.getPort();
+		//port = 8080;
 	}
 	
 	public void setPort(int port) {
@@ -56,7 +60,32 @@ public class ZvServer {
 	public static void main(String[] args) throws Exception {
 
 		ZvServer zvServer = new ZvServer();
-		zvServer.start();	
+		zvServer.start();
+		System.out.println("Please Enter the dataset name followed by path to a CSV file (e.g. Dataset /file/dataset.csv): ");
+		Scanner sc = new Scanner(System.in);
+		String line = new String();
+		while (sc.hasNextLine() && !((line = sc.nextLine()).equals(""))){
+			if (line.equals("UI")){
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().browse(new URI("http://localhost:8080"));
+				}
+			}
+			String[] arguments = line.split(" ");
+			System.out.println("sc------ " +line);
+			List<String> dataset4 = new ArrayList<String>(); //cmu
+			dataset4.add(arguments[0]);
+			File file = new File(arguments[1]);
+			dataset4.add(file.getAbsolutePath());
+			ZvBasicAPI api = new ZvBasicAPI();
+			File meta = api.generateMetaFile(file);
+			//file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.txt")).getFile());
+			dataset4.add(meta.getAbsolutePath());
+			ZvMain zvMain=new ZvMain();
+			zvMain.uploadDatasettoDB(dataset4,false);
+			zvMain.insertUserTablePair("public", arguments[0]);
+			System.out.println("Please Enter the dataset name followed by path to a CSV file (e.g. Dataset /file/dataset.csv): ");
+
+		}
 	}	
 
 }
