@@ -1,8 +1,7 @@
 package edu.uiuc.zenvisage.api;
 
 import java.io.*;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -595,15 +594,16 @@ public class ZvBasicAPI {
 		return null;
 	}
 	
+
 	@RequestMapping(value = "/executeZQLScript", method = RequestMethod.GET)
 	@ResponseBody
 	public String executeZQLScript(@RequestParam(value="query")  String arg, HttpServletResponse response) {
 		// for testing my query graph executor with zql.html
 		// String outputExecutor = zvMain.runZQLCompleteQuery(arg);
 		try {
-		String outputGraphExecutor = zvMain.runZQLScript(arg);
-		logQueries("ZQL",null,arg);
-		return outputGraphExecutor;
+			String outputGraphExecutor = zvMain.runZQLScript(arg);
+			logQueries("ZQL",null,arg);
+			return outputGraphExecutor;
 		} catch (Exception e) {
 			e.printStackTrace();
 			try {
@@ -613,7 +613,7 @@ public class ZvBasicAPI {
 			}
 		}
 		return null;
-	} 
+	}
 
 	@RequestMapping(value = "/selectXYZ", method = RequestMethod.POST)
 	@ResponseBody
@@ -627,6 +627,11 @@ public class ZvBasicAPI {
 		return null;
 	}
 
+	@RequestMapping(value = "/executeSearch", method = RequestMethod.POST)
+	public @ResponseBody String executeSearch(@RequestParam String searchTerm, String location, String from, String to){
+		System.out.println(searchTerm +" " + location + " " + from + " " + to);
+		return "Done";
+	}
 	//Add join key attribute to join key table
     @RequestMapping(value = "/join_key_adder", method = RequestMethod.POST)
     	public @ResponseBody Map<String, String> join_key_adder(@RequestParam String username, String dataset, String join_key) throws IOException, ServletException, InterruptedException, SQLException, CannotPerformOperationException{
@@ -661,6 +666,9 @@ public class ZvBasicAPI {
         String[] types = new String[category.length];
         for(int i = 0; i < data.length; ++i){
             String entry = data[i].replace("\"", "");
+            if (entry.equals("dynamic_class")){
+                break;
+            }
             try{
                 Integer.parseInt(data[i]);
             }catch(NumberFormatException e){
@@ -680,13 +688,15 @@ public class ZvBasicAPI {
 
         }
         StringBuilder bd = new StringBuilder();
-        for (int i = 0; i < category.length; ++i){
+        for (int i = 0; i < types.length; ++i){
+            if (types[i] == null || types[i].equals("")) break;;
             bd.append(category[i].replace("\"", ""));
             bd.append(":");
             bd.append(types[i]);
             bd.append(",");
             bd.append("indexed,");
-            if (types[i].equals("float") || types[i].equals("int")){
+
+            if ( types[i].equals("float") || types[i].equals("int")){
                 bd.append("T,T,F,F,F,0,Q");
             }else{
                 bd.append("F,F,T,F,F,0,Q");
@@ -727,6 +737,7 @@ public class ZvBasicAPI {
         dataset5.add(meta.getAbsolutePath());
         ZvMain zvMain=new ZvMain();
         zvMain.uploadDatasettoDB(dataset5,false);
+
 
     }
     

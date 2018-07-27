@@ -156,8 +156,7 @@ public class SQLQueryExecutor {
 		rs.close();
         return info;
 	}
-	
-	
+
     public boolean checkuser(String username, String password) throws SQLException, CannotPerformOperationException, InvalidHashException {
         Statement stmt = c.createStatement();
         String sql = "SELECT id, password FROM users WHERE id='" + username + "'";
@@ -349,6 +348,14 @@ public class SQLQueryExecutor {
 
 		/* Testing below */
         //System.out.println("Printing Visual Groups:\n" + this.visualComponentList.toString());
+	}
+	public void executeStatement(String sql) throws SQLException {
+		Statement stmt = c.createStatement();
+		String sqlquery = "COPY (" + sql + ") TO '/tmp/temp.csv' WITH (FORMAT CSV, HEADER)";
+		//COPY hashtag(hashtags, days, count) TO '/tmp/temp.csv' WITH (FORMAT CSV, HEADER)
+		System.out.println("sql: " +sqlquery);
+		stmt.execute(sqlquery);
+		stmt.close();
 	}
 
 	public void executeSQL(String sql, String z, String databaseName, String x, List<String> yAttributes) throws SQLException{

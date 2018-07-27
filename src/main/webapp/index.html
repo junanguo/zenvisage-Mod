@@ -9,17 +9,92 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zenvisage</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="js/jquery.comiseo.daterangepicker.js"></script>
+    <script src="js/moment.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-ui.js"></script>
+
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/jquery-ui.css" rel="stylesheet">
     <link href="css/draw.css" rel="stylesheet">
     <link href="css/graph.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
     <link href="css/introjs.css" rel="stylesheet">
+
+    <script>
+      function executeSearch(){
+          alert(document.getElementById("terms").value);
+          alert(document.getElementById("location").value);
+          alert(document.getElementById("from").value);
+          alert(document.getElementById("to").value);
+
+          var data = {
+              "searchTerm": document.getElementById("terms").value,
+              "location": document.getElementById("location").value,
+              "from": document.getElementById("from").value,
+              "to": document.getElementById("to").value,
+          };
+          $.ajax({
+              type: "POST",
+              url: "/zv/executeSearch",
+              data: data,
+              async: false,
+              success: function(response){
+                alert("got");
+              },
+              error: function() {
+                  alert("failed to add join key to database");
+              }
+          });
+      }
+        $( function() {
+            var dateFormat = "mm/dd/yy",
+                from = $( "#from" )
+                    .datepicker({
+                        defaultDate: "+1w",
+                        changeMonth: true,
+                        changeYear: true,
+                        numberOfMonths: 1
+                    })
+                    .on( "change", function() {
+                        to.datepicker( "option", "minDate", getDate( this ) );
+                    }),
+                to = $( "#to" ).datepicker({
+                    defaultDate: "+1w",
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1
+                })
+                    .on( "change", function() {
+                        from.datepicker( "option", "maxDate", getDate( this ) );
+                    });
+
+            function getDate( element ) {
+                var date;
+                try {
+                    date = $.datepicker.parseDate( dateFormat, element.value );
+                } catch( error ) {
+                    date = null;
+                }
+
+                return date;
+            }
+        } );
+    </script>
     <!-- <script type="text/javascript" src="secret.json"></script> -->
     </head>
     <div id = "container" style="display:none;">
+      <style>
+        body {font-family: "Lato", sans-serif;}
+
+        #Oslo {background-color:orange;}
+      </style>
   <body class = "intro_after_dataload">
     <!-- this div contains everything in the body -->
+
 
 
 <div id="loginModal" class="modal fade in" tabindex="-1" role="dialog" aria-hidden="true" ng-controller="loginModalController">
@@ -29,8 +104,6 @@
             <img src="css/zenvisageLogo.png" style="width: 65%; height: 65%;"></span>
           </div>
           <div class="modal-body">
-
-              <form id="logInForm" action="" method="post">
 
                 <div class="form-group">
                   <label>Email:</label><input type="text" id="username" class="form-control input-lg" name="uname">
@@ -54,9 +127,21 @@
         </div>
      </div>
   </div>
-
+    <div>
+        <div id="custom-search-input" style="width: 60%; margin: 0 auto; margin-top: 10pt; margin-buttom:10pt;">
+          <div class="input-group col-md-12">
+            <input type="text" id = "terms" name= "terms" class="form-control input-lg" placeholder="Search Terms..."/>
+            <span class="input-group-btn">
+                        <button class="btn btn-info btn-lg" type="button" id="searchBtn" onclick="executeSearch()">
+                            <i class="glyphicon glyphicon-search"></i>
+                        </button>
+            </span>
+          </div>
+        </div>
+    </div>
 
     <div id="everything">
+
 
       <div id="errorModal" class="modal fade">
         <div class="modal-dialog" role="document">
@@ -392,6 +477,15 @@
         </div>
       </div>
 
+      <div style="width: 15%; border-style: solid;">
+        <!-- sidebar> -->
+        Location:<input type="text" id="location"/>
+        <label for="from">From</label>
+        <input type="text" id="from" name="from">
+        <label for="to">to</label>
+        <input type="text" id="to" name="to">
+
+      </div>
 
       <!-- this div contains the left-bar with the data information -->
       <div id="left-bar">
@@ -409,7 +503,7 @@
             <hr>
 
             <div class="btn-group btn-group-justified" role="group" aria-label="...">
-            <div class="btn-group" role="group">
+            <div class="btn-group" role="group" style="display: none">
               <button id="loginmodaltrigger"  type="button" class="btn btn-default" style="display:none;">Sign in / Sign up</button>
             </div>
             </div>

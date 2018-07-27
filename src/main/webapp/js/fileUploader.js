@@ -170,6 +170,7 @@ app.controller('fileuploadController', [
                   reader.readAsBinaryString(myFile);
               }
           });
+
 function easyUpload() {
 alert("Upload requested");
 
