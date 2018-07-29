@@ -46,10 +46,10 @@ public class ZvServer {
 		server.start();
 //		ZvMain zvMain = (ZvMain) SpringApplicationContext.getBean("zvMain");
 //		zvMain.loadData();
-		
-		DatabaseAutoLoader databaseAutoLoader = new DatabaseAutoLoader(this);
-		databaseAutoLoader.run();
-	
+//
+//		DatabaseAutoLoader databaseAutoLoader = new DatabaseAutoLoader(this);
+//		databaseAutoLoader.run();
+//
 	}
 	
 	

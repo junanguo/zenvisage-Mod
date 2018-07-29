@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zenvisage</title>
+    <title>HIV Tweet Analysis</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -23,19 +23,64 @@
     <link href="css/graph.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
     <link href="css/introjs.css" rel="stylesheet">
+    <style>
 
+      .sidenav {
+        height: 100%;
+        width: 180pt;
+        position: fixed;
+        z-index: 1000;
+        top: 0;
+        left: -180pt;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+      }
+
+      .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+      }
+
+      .sidenav a:hover {
+        color: #f1f1f1;
+      }
+
+      .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+      }
+    </style>
     <script>
-      function executeSearch(){
-          alert(document.getElementById("terms").value);
-          alert(document.getElementById("location").value);
-          alert(document.getElementById("from").value);
-          alert(document.getElementById("to").value);
+        alert = function() {};
+
+        function executeSearch(){
+            var related = "false";
+            var retweet = "false";
+            if (document.getElementById("retweet").checked == true){
+              retweet = "true";
+            }
+            if (document.getElementById("cooccurrence").checked == true){
+                related = "true";
+            }
 
           var data = {
               "searchTerm": document.getElementById("terms").value,
               "location": document.getElementById("location").value,
               "from": document.getElementById("from").value,
               "to": document.getElementById("to").value,
+              "minhtCount": document.getElementById("htCount").value,
+              "minuCount":document.getElementById("uCount").value,
+              "retweet": retweet,
+              "related": related,
           };
           $.ajax({
               type: "POST",
@@ -43,15 +88,15 @@
               data: data,
               async: false,
               success: function(response){
-                alert("got");
+                alert(response);
               },
               error: function() {
-                  alert("failed to add join key to database");
+                 // alert("failed to add join key to database");
               }
           });
       }
         $( function() {
-            var dateFormat = "mm/dd/yy",
+            var dateFormat = "mm-dd-yyyy",
                 from = $( "#from" )
                     .datepicker({
                         defaultDate: "+1w",
@@ -91,6 +136,7 @@
         body {font-family: "Lato", sans-serif;}
 
         #Oslo {background-color:orange;}
+
       </style>
   <body class = "intro_after_dataload">
     <!-- this div contains everything in the body -->
@@ -127,18 +173,23 @@
         </div>
      </div>
   </div>
-    <div>
-        <div id="custom-search-input" style="width: 60%; margin: 0 auto; margin-top: 10pt; margin-buttom:10pt;">
+    <div style="margin-bottom: 10pt">
+        <div id="custom-search-input" style="width: 60%; margin: 0 auto; margin-left: 20%; margin-top: 10pt; margin-buttom:12pt; display: inline-block;">
           <div class="input-group col-md-12">
-            <input type="text" id = "terms" name= "terms" class="form-control input-lg" placeholder="Search Terms..."/>
+            <input type="text" id = "terms" name= "terms" class="form-control input-lg" placeholder="Search Terms..." onclick="openNav()"/>
             <span class="input-group-btn">
                         <button class="btn btn-info btn-lg" type="button" id="searchBtn" onclick="executeSearch()">
                             <i class="glyphicon glyphicon-search"></i>
                         </button>
             </span>
           </div>
+
         </div>
-    </div>
+
+        <div style="display: inline-block; margin-top: -30pt">
+          <input type="checkbox" id="cooccurrence" name = "cooccurrence" style="display: inline-block;"/> Use related terms
+        </div>
+        </div>
 
     <div id="everything">
 
@@ -475,15 +526,34 @@
             </div>
           </div>
         </div>
+
       </div>
 
-      <div style="width: 15%; border-style: solid;">
+      <div style="width: 15pt; margin-left: 3px">
+        <div id="mySidenav" class="sidenav">
+          <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+          <h2 style="color: white;">Criteria</h2>
+          <span style="color: white">Location: </span><br><input type="text" id="location" style="width: 160pt"/><br><br>
+          <span style="color: white">Minimum htCount:</span><br><input type="text" id = "htCount" style="width: 160pt"/><br><br>
+          <span style="color: white">Minimum uCount:</span><br><input type="text" id = "uCount" style="width: 160pt"/><br><br>
+          <span style="color: white">From:</span><br><input type="text" id="from" name="from" style="width: 160pt"/><br><br>
+          <span style="color: white">To:</span><br><input type="text" id="to" name="to:" style="width: 160pt"/><br><br>
+          <span style="color: white">Retweeted:</span><input type="checkbox" id="retweet" name="retweet" style="width: 160pt"/><br><br>
+
+        </div>
+        <span style="font-size:25px;cursor:pointer" onclick="openNav()">&#9776;</span>
+
+        <script>
+            function openNav() {
+                document.getElementById("mySidenav").style.left = "0pt";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidenav").style.left = "-180pt";
+            }
+        </script>
         <!-- sidebar> -->
-        Location:<input type="text" id="location"/>
-        <label for="from">From</label>
-        <input type="text" id="from" name="from">
-        <label for="to">to</label>
-        <input type="text" id="to" name="to">
+
 
       </div>
 
@@ -491,9 +561,6 @@
       <div id="left-bar">
         <div id="sidebar" class="interface" ng-controller="datasetController"  >
           <h4>
-            <span><img data-intro='Welcome to Zenvisage. Zenvisage is a tool which recommends visualizations that match desired user patterns. Follow this tutorial to learn more!' data-step="1"  src="css/zenvisageLogo.png" style="width: 65%; height: 65%;"></span>
-            <a href="https://github.com/zenvisage/zenvisage/wiki/Functionalities-and-Options"><i class="glyphicon glyphicon-info-sign" style="font-size: 20px;"></i></a>
-            <a href="" onclick="javascript:starttutorial();"><i class="glyphicon glyphicon-play-circle" style="font-size: 20px; "></i></a>
             <!-- <button type="button" class="btn btn-circle" onclick="javascript:starttutorial();"><span class="glyphicon glyphicon-play" style="color: white;font-size: 10px;"></span></button> -->
             <!-- <button type="button" class="textButton" onclick="javascript:starttutorial();">Tutorial</button> -->
           </h4>

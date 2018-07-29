@@ -1442,7 +1442,7 @@ $scope.inittablelist = function () {
         }).
 
         error(function(response) {
-          alert('Request failed: /getformdata');
+          //alert('Request failed: /getformdata');
           document.getElementById("loadingEclipse").style.display = "none";
           document.getElementById("loadingEclipse2").style.display = "none";
         });

@@ -626,11 +626,85 @@ public class ZvBasicAPI {
         }
 		return null;
 	}
+	static int num = 4;
 
 	@RequestMapping(value = "/executeSearch", method = RequestMethod.POST)
-	public @ResponseBody String executeSearch(@RequestParam String searchTerm, String location, String from, String to){
-		System.out.println(searchTerm +" " + location + " " + from + " " + to);
-		return "Done";
+	public @ResponseBody String executeSearch(@RequestParam String searchTerm, String location, String from, String to, String minuCount, String minhtCount, String retweet, String related) throws SQLException, IOException, InterruptedException, InvalidHashException, CannotPerformOperationException {
+		StringBuilder sqlb = new StringBuilder();
+		if (minuCount.equals("")) minuCount = "10";
+		if (minhtCount.equals("")) minhtCount = "10";
+		String startDate = new String();
+		if (from.equals("")){
+			startDate = "01/01/2018";
+		}else{
+			startDate = from;
+		}
+
+		String terms[] = searchTerm.split(" ");
+		StringBuilder posTerms = new StringBuilder();
+		StringBuilder negTerms = new StringBuilder();
+		String posPattern = new String();
+		String negPattern = new String();
+		for (int i = 0; i < terms.length; ++i){
+			if (terms[i].charAt(0) == '-'){
+				negTerms.append(terms[i].substring(1, terms[i].length()));
+				negTerms.append("|");
+			}else{
+				posTerms.append(terms[i]);
+				posTerms.append("|");
+			}
+		}
+		if (!negTerms.toString().equals("")){
+			negPattern = negTerms.toString().substring(0, negTerms.length()-1);
+		}
+		if (!posTerms.toString().equals("")){
+			posPattern = posTerms.toString().substring(0, posTerms.length()-1);
+		}
+		sqlb.append("SELECT DATE_PART('day', createdate::timestamp - \'" + startDate + "\'::timestamp) AS ElapsedDays, placeFullName, lower(hashtags) AS hashtags, htCount, uCount, RTSum from uclahiv WHERE ");
+		sqlb.append(" htCount > " + minhtCount);
+		sqlb.append(" AND uCount > " + minuCount);
+		if (!location.equals("")){
+			sqlb.append(" AND placeFullName::text LIKE " + "\'%" + location +"%\'");
+		}
+		if (!posPattern.equals("")){
+			sqlb.append(" AND lower(hashtags) SIMILAR TO " + "\'%("+ posPattern.toLowerCase() + ")%\'");
+		}
+		if (!negPattern.equals("")){
+			sqlb.append(" AND lower(hashtags) NOT SIMILAR TO " + "\'%("+ negPattern.toLowerCase() + ")%\'");
+		}
+		if (!from.equals("")){
+			sqlb.append(" AND createdate > \'" + from + "\'::timestamp");
+		}
+		if (!to.equals("")){
+			sqlb.append(" AND createdate < \'" + to + "\'::timestamp");
+		}
+		if (retweet.equals("true")){
+			sqlb.append(" AND RTSum > 0");
+		}
+		sqlb.append(" ORDER BY htCount DESC");
+		System.out.println("Generated: " + sqlb.toString());
+		SQLQueryExecutor ex = new SQLQueryExecutor();
+		ex.executeStatement(sqlb.toString());
+		String datasetname = "data" + num;
+		num++;
+		List<String> dataset4 = new ArrayList<String>(); //cmu
+		dataset4.add(datasetname);
+		File file = new File("/tmp/temp.csv");
+		BufferedReader bfd = new BufferedReader(new FileReader(file));
+		for (int i = 0; i < 10; ++i){
+			System.out.println("content: " + bfd.readLine());
+		}
+		dataset4.add(file.getAbsolutePath());
+		ZvBasicAPI api = new ZvBasicAPI();
+		File meta = api.generateMetaFile(file);
+		//file = new File(zvServer.getClass().getClassLoader().getResource(("cmu_clean.txt")).getFile());
+		dataset4.add(meta.getAbsolutePath());
+		ZvMain zvMain=new ZvMain();
+		zvMain.uploadDatasettoDB(dataset4,false);
+		zvMain.insertUserTablePair("public", datasetname);
+		file.delete();
+		meta.delete();
+		return sqlb.toString();
 	}
 	//Add join key attribute to join key table
     @RequestMapping(value = "/join_key_adder", method = RequestMethod.POST)
@@ -660,8 +734,27 @@ public class ZvBasicAPI {
 	public File generateMetaFile(File file) throws IOException {
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		String signature = br.readLine();
+		System.out.println("sig " + signature);
 		String[] category = signature.split(",");
 		String str = br.readLine();
+		int quoteCount = 0;
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < str.length(); ++i){
+			if (str.charAt(i) == ','){
+				if (quoteCount % 2 == 1){
+					sb.append("_");
+				}else {
+					sb.append(",");
+				}
+			}else if (str.charAt(i) == '\"'){
+				quoteCount ++;
+				sb.append("\"");
+			}else {
+				sb.append(str.charAt(i));
+			}
+		}
+		str = sb.toString();
+		System.out.println("str " + str);
         String[] data = str.split(",");
         String[] types = new String[category.length];
         for(int i = 0; i < data.length; ++i){
@@ -694,7 +787,12 @@ public class ZvBasicAPI {
             bd.append(":");
             bd.append(types[i]);
             bd.append(",");
-            bd.append("indexed,");
+            if (types[i].equals("string")){
+            	bd.append("unindexed,");
+			}else{
+				bd.append("indexed,");
+
+			}
 
             if ( types[i].equals("float") || types[i].equals("int")){
                 bd.append("T,T,F,F,F,0,Q");

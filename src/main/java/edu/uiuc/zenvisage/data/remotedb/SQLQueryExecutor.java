@@ -46,7 +46,8 @@ public class SQLQueryExecutor {
 	 */
 	private String database = "postgres";
 //	private String host = "jdbc:postgresql://localhost:" + Readconfig.getPostgresport() + "/"+database;
-	private String host = "jdbc:postgresql://localhost:5432/"+database;
+	//private String host = "jdbc:postgresql://10.128.6.136:5432/"+database;
+	private String host = "jdbc:postgresql://localhost:5432/" + database;
 	private String username;
 	private String password;
 	Connection c = null;
@@ -55,8 +56,10 @@ public class SQLQueryExecutor {
 
 	// Initialize connection
 	public SQLQueryExecutor() {
-		this.username = Readconfig.getUsername();
-		this.password = Readconfig.getPassword();
+//		this.username = Readconfig.getUsername();
+//		this.password = Readconfig.getPassword();
+		this.username="postgres";
+		this.password="zenvisage";
 	      try {
 		         Class.forName("org.postgresql.Driver");
 		         c = DriverManager
