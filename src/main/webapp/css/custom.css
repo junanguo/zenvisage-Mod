@@ -388,6 +388,7 @@ svg#treesvg {
 .info-text {
   margin-bottom: 15px;
 }
+
 #custom-search-input{
     padding: 3px;
     border: solid 1px #E4E4E4;
@@ -426,4 +427,5 @@ svg#treesvg {
 @media only screen and (max-device-width:480px) {
     /* show the popup */
     #mobilePopup { display: block; }
+
 }
