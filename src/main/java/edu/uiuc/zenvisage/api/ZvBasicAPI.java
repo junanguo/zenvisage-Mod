@@ -626,11 +626,13 @@ public class ZvBasicAPI {
         }
 		return null;
 	}
-	static int num = 4;
+	static int num = 26;
 
 	@RequestMapping(value = "/executeSearch", method = RequestMethod.POST)
-	public @ResponseBody String executeSearch(@RequestParam String searchTerm, String location, String from, String to, String minuCount, String minhtCount, String retweet, String related) throws SQLException, IOException, InterruptedException, InvalidHashException, CannotPerformOperationException {
+	public @ResponseBody String executeSearch(@RequestParam String searchTerm, String location, String from, String to, String minuCount, String minhtCount, String state, String retweet, String related) throws SQLException, IOException, InterruptedException, InvalidHashException, CannotPerformOperationException {
 		StringBuilder sqlb = new StringBuilder();
+		SQLQueryExecutor ex = new SQLQueryExecutor();
+
 		if (minuCount.equals("")) minuCount = "10";
 		if (minhtCount.equals("")) minhtCount = "10";
 		String startDate = new String();
@@ -645,26 +647,42 @@ public class ZvBasicAPI {
 		StringBuilder negTerms = new StringBuilder();
 		String posPattern = new String();
 		String negPattern = new String();
-		for (int i = 0; i < terms.length; ++i){
-			if (terms[i].charAt(0) == '-'){
-				negTerms.append(terms[i].substring(1, terms[i].length()));
-				negTerms.append("|");
-			}else{
-				posTerms.append(terms[i]);
-				posTerms.append("|");
+		if (!searchTerm.equals("")) {
+			for (int i = 0; i < terms.length; ++i){
+				if (terms[i].charAt(0) == '-'){
+					negTerms.append(terms[i].substring(1, terms[i].length()));
+					negTerms.append("|");
+				}else{
+					posTerms.append(terms[i]);
+					posTerms.append("|");
+				}
+			}
+			if (!negTerms.toString().equals("")){
+				negPattern = negTerms.toString().substring(0, negTerms.length()-1);
+			}
+			if (!posTerms.toString().equals("")){
+				posPattern = posTerms.toString().substring(0, posTerms.length()-1);
 			}
 		}
-		if (!negTerms.toString().equals("")){
-			negPattern = negTerms.toString().substring(0, negTerms.length()-1);
-		}
-		if (!posTerms.toString().equals("")){
-			posPattern = posTerms.toString().substring(0, posTerms.length()-1);
+
+		if (!posPattern.equals("") && related.equals("true")){
+			String cooccurrenceSQL = "(SELECT h1 as term,cooccurrencecount FROM uclacooccurrence WHERE h2 similar to '%("+ posPattern+ ")%\' UNION SELECT h2 as term,cooccurrencecount FROM uclacooccurrence WHERE h1 similar to '%(" + posPattern + ")%\') order by cooccurrencecount desc limit 5";
+			ResultSet rs = ex.executeQuery(cooccurrenceSQL);
+			StringBuilder bd = new StringBuilder(posPattern);
+			for (int i = 1; i <= 5; ++i){
+				rs.next();
+				bd.append("| " + rs.getString(1));
+			}
+			posPattern = bd.toString();
 		}
 		sqlb.append("SELECT DATE_PART('day', createdate::timestamp - \'" + startDate + "\'::timestamp) AS ElapsedDays, placeFullName, lower(hashtags) AS hashtags, htCount, uCount, RTSum from uclahiv WHERE ");
 		sqlb.append(" htCount > " + minhtCount);
 		sqlb.append(" AND uCount > " + minuCount);
 		if (!location.equals("")){
 			sqlb.append(" AND placeFullName::text LIKE " + "\'%" + location +"%\'");
+		}
+		if (!state.equals("any")){
+			sqlb.append(" AND placeFullName::text SIMILAR TO " + "\'%(" + state +")%\'");
 		}
 		if (!posPattern.equals("")){
 			sqlb.append(" AND lower(hashtags) SIMILAR TO " + "\'%("+ posPattern.toLowerCase() + ")%\'");
@@ -683,7 +701,6 @@ public class ZvBasicAPI {
 		}
 		sqlb.append(" ORDER BY htCount DESC");
 		System.out.println("Generated: " + sqlb.toString());
-		SQLQueryExecutor ex = new SQLQueryExecutor();
 		ex.executeStatement(sqlb.toString());
 		String datasetname = "data" + num;
 		num++;
@@ -704,7 +721,7 @@ public class ZvBasicAPI {
 		zvMain.insertUserTablePair("public", datasetname);
 		file.delete();
 		meta.delete();
-		return sqlb.toString();
+		return posPattern;
 	}
 	//Add join key attribute to join key table
     @RequestMapping(value = "/join_key_adder", method = RequestMethod.POST)

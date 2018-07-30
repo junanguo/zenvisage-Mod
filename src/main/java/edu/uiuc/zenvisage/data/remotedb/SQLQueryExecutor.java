@@ -361,6 +361,13 @@ public class SQLQueryExecutor {
 		stmt.close();
 	}
 
+	public ResultSet executeQuery(String sql) throws SQLException {
+		Statement stmt = c.createStatement();
+		System.out.println("sql: " +sql);
+		ResultSet rs = stmt.executeQuery(sql);
+		return rs;
+	}
+
 	public void executeSQL(String sql, String z, String databaseName, String x, List<String> yAttributes) throws SQLException{
 		Statement st = c.createStatement();
 		ResultSet rs = st.executeQuery(sql);
